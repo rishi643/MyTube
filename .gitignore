@@ -1,0 +1,71 @@
+# Dependencies (Root, Frontend, Backend, Workers)
+node_modules/
+*/node_modules/
+*/*/node_modules/
+.pnp
+.pnp.js
+
+# Environment Variables & Secrets
+.env
+.env.*
+!.env.example
+*.env
+*.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
+
+# Next.js Build Outputs & Cache (Frontend)
+.next/
+out/
+build/
+dist/
+
+# Transpiled & Compiled Code (Backend & Workers)
+backend/dist/
+*.tsbuildinfo
+next-env.d.ts
+
+# Prisma Generated Artifacts & Engine Temp Files
+backend/node_modules/.prisma/
+*.tmp*
+query_engine*
+*.dll.node
+
+# Uploaded Media & Local File Storage
+uploads/
+backend/uploads/
+uploads/videos/*
+uploads/thumbnails/*
+uploads/hls/*
+!uploads/videos/.gitkeep
+!uploads/thumbnails/.gitkeep
+!uploads/hls/.gitkeep
+
+# Logs & Debugging
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# System & OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE & Editor Directories
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

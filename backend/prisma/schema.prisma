@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum VideoStatus {
+  PROCESSING
+  READY
+  FAILED
+}
+
+model User {
+  id           String         @id @default(uuid())
+  email        String         @unique
+  username     String         @unique
+  passwordHash String
+  avatarUrl    String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  videos       Video[]
+  likes        Like[]
+  comments     Comment[]
+  subscribers  Subscription[] @relation("channelSubscribers")
+  subscribedTo Subscription[] @relation("userSubscriptions")
+  watchHistory WatchHistory[]
+}
+
+model Video {
+  id           String         @id @default(uuid())
+  title        String
+  description  String
+  hlsMasterUrl String
+  thumbnailUrl String?
+  tags         String[]       @default([])
+  views        BigInt         @default(0)
+  status       VideoStatus    @default(PROCESSING)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  userId       String
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  likes        Like[]
+  comments     Comment[]
+  watchHistory WatchHistory[]
+
+  @@index([userId])
+}
+
+model Subscription {
+  id          String   @id @default(uuid())
+  userId      String
+  channelId   String
+  createdAt   DateTime @default(now())
+
+  user        User     @relation("userSubscriptions", fields: [userId], references: [id], onDelete: Cascade)
+  channel     User     @relation("channelSubscribers", fields: [channelId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, channelId])
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  isLike    Boolean
+  userId    String
+  videoId   String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video     Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, videoId])
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  userId    String
+  videoId   String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video     Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@index([videoId])
+}
+
+model WatchHistory {
+  id          String   @id @default(uuid())
+  userId      String
+  videoId     String
+  progressSec Float    @default(0)
+  completed   Boolean  @default(false)
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video       Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, videoId])
+}
